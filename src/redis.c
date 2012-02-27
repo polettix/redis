@@ -178,6 +178,7 @@ struct redisCommand readonlyCommandTable[] = {
     {"flushall",flushallCommand,1,0,NULL,0,0,0},
     {"sort",sortCommand,-2,REDIS_CMD_DENYOOM,NULL,1,1,1},
     {"info",infoCommand,1,0,NULL,0,0,0},
+    {"time",timeCommand,1,0,NULL,0,0,0},
     {"monitor",monitorCommand,1,0,NULL,0,0,0},
     {"ttl",ttlCommand,2,0,NULL,1,1,1},
     {"persist",persistCommand,2,0,NULL,1,1,1},
@@ -1121,7 +1122,8 @@ int processCommand(redisClient *c) {
      * we are a slave with a broken link with master. */
     if (server.masterhost && server.replstate != REDIS_REPL_CONNECTED &&
         server.repl_serve_stale_data == 0 &&
-        c->cmd->proc != infoCommand && c->cmd->proc != slaveofCommand)
+        c->cmd->proc != infoCommand && c->cmd->proc != slaveofCommand
+        && c->cmd->proc != timeCommand)
     {
         addReplyError(c,
             "link with MASTER is down and slave-serve-stale-data is set to no");
@@ -1129,7 +1131,8 @@ int processCommand(redisClient *c) {
     }
 
     /* Loading DB? Return an error if the command is not INFO */
-    if (server.loading && c->cmd->proc != infoCommand) {
+    if (server.loading && c->cmd->proc != infoCommand &&
+        c->cmd->proc != timeCommand) {
         addReply(c, shared.loadingerr);
         return REDIS_OK;
     }
@@ -1515,6 +1518,10 @@ void infoCommand(redisClient *c) {
         (unsigned long)sdslen(info)));
     addReplySds(c,info);
     addReply(c,shared.crlf);
+}
+
+void timeCommand(redisClient *c) {
+    addReplyLongLong(c,(long long)time(NULL));
 }
 
 void monitorCommand(redisClient *c) {
