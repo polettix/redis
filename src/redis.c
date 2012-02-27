@@ -75,6 +75,7 @@ struct redisCommand readonlyCommandTable[] = {
     {"set",setCommand,3,REDIS_CMD_DENYOOM,NULL,0,0,0},
     {"setnx",setnxCommand,3,REDIS_CMD_DENYOOM,NULL,0,0,0},
     {"setex",setexCommand,4,REDIS_CMD_DENYOOM,NULL,0,0,0},
+    {"setnxex",setnxexCommand,4,REDIS_CMD_DENYOOM,NULL,0,0,0},
     {"append",appendCommand,3,REDIS_CMD_DENYOOM,NULL,1,1,1},
     {"strlen",strlenCommand,2,0,NULL,1,1,1},
     {"del",delCommand,-2,0,NULL,0,0,0},

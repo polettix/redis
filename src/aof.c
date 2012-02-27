@@ -218,7 +218,7 @@ void feedAppendOnlyFile(struct redisCommand *cmd, int dictid, robj **argv, int a
     if (cmd->proc == expireCommand) {
         /* Translate EXPIRE into EXPIREAT */
         buf = catAppendOnlyExpireAtCommand(buf,argv[1],argv[2]);
-    } else if (cmd->proc == setexCommand) {
+    } else if ((cmd->proc == setexCommand) || (cmd->proc == setnxexCommand)) {
         /* Translate SETEX to SET and EXPIREAT */
         tmpargv[0] = createStringObject("SET",3);
         tmpargv[1] = argv[1];

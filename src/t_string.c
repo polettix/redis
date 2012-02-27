@@ -49,6 +49,11 @@ void setexCommand(redisClient *c) {
     setGenericCommand(c,0,c->argv[1],c->argv[3],c->argv[2]);
 }
 
+void setnxexCommand(redisClient *c) {
+    c->argv[3] = tryObjectEncoding(c->argv[3]);
+    setGenericCommand(c,1,c->argv[1],c->argv[3],c->argv[2]);
+}
+
 int getGenericCommand(redisClient *c) {
     robj *o;
 
